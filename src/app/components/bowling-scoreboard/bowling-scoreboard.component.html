@@ -1,0 +1,27 @@
+<h1 id="tableTitle">Scoreboard</h1>
+<div class="container-file">
+  <h2>Enter file:</h2>
+  <label for="file-upload" class="custom-file-upload">
+    Upload File
+  </label>
+  <input id="file-upload" type="file" (change)="onFileSelected($event)">
+</div>
+<div class="container-table">
+  <table aria-labelledby="tableTitle">
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>Score</th>
+        <th *ngFor="let index of columns">{{index + 1}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let player of players">
+        <td>{{player.name}}</td>
+        <td>{{player.totalScore}}</td>
+        <td *ngFor="let score of player.scores">{{score}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<img class="img" src="/assets/images/bowling.png" alt="bowling">
