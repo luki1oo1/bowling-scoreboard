@@ -1,4 +1,4 @@
-<h1 id="tableTitle">Scoreboard</h1>
+<h1 id="table-title">Scoreboard</h1>
 
 <div class="container-file">
   <h2>Enter file:</h2>
@@ -9,8 +9,8 @@
 </div>
 
 <ng-container *ngIf="players.length > 0">
-  <div class="container-table">
-    <table aria-labelledby="tableTitle">
+  <div class="container-table desktop-table">
+    <table aria-labelledby="table-title">
       <thead>
         <tr>
           <th>Player</th>
@@ -23,6 +23,31 @@
           <td>{{player.name}}</td>
           <td>{{player.totalScore}}</td>
           <td *ngFor="let score of player.scores">{{score}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="container-table mobile-table" *ngFor="let player of players">
+    <table aria-labelledby="table-title">
+      <thead>
+        <tr>
+          <th>Player </th>
+          <th>{{player.name}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Throw</th>
+          <th>score</th>
+        </tr>
+        <tr *ngFor="let score of player.scores; let i = index">
+          <td>{{i + 1}}</td>
+          <td>{{score}}</td>
+        </tr>
+        <tr>
+          <th>Score</th>
+          <td>{{player.totalScore}}</td>
         </tr>
       </tbody>
     </table>

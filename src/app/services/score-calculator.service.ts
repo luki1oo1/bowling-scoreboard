@@ -12,8 +12,8 @@ export class ScoreCalculatorService {
     for (let frame = 0; frame < 10; frame++) {
       // strike
       if (scores[frameIndex] === 10) {
-        score += 10 + scores[frameIndex + 1] + scores[frameIndex + 2];
-        frameIndex++;
+        score += 10 + scores[frameIndex + 2];
+        frameIndex += 2;
       }
       // spare
       else if (scores[frameIndex] + scores[frameIndex + 1] === 10) {
