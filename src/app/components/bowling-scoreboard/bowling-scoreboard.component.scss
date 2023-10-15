@@ -95,10 +95,14 @@
   }
 }
 
-::ng-deep snack-bar-container.mat-snack-bar-container {
-  max-width: 90% ;
+::ng-deep .cdk-global-overlay-wrapper {
+  top: -800px;
 
-  .mat-simple-snack-bar-content {
-    color: color(red);
+  snack-bar-container.mat-snack-bar-container {
+    max-width: 90%;
+
+    .mat-simple-snack-bar-content {
+      color: color(red);
+    }
   }
 }
