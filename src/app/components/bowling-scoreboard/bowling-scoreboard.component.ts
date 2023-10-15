@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { IPlayer } from 'src/app/interfeces/players-interfece';
+import { IPlayer } from 'src/app/interfaces/players-interface';
 import { ScoreCalculatorService } from 'src/app/services/score-calculator.service';
-import { ScoreValidationService } from 'src/app/services/score-validation.service'; // Dodaj import
+import { ScoreValidationService } from 'src/app/services/score-validation.service';
 
 @Component({
   selector: 'app-bowling-scoreboard',
@@ -14,11 +14,19 @@ export class BowlingScoreboardComponent {
 
   constructor(
     private scoreCalculatorService: ScoreCalculatorService,
-    private scoreValidationService: ScoreValidationService // Dodaj serwis walidacji
+    private scoreValidationService: ScoreValidationService
   ) { }
 
-  onFileSelected(event) {
-    const file: File = event.target.files[0];
+  isHTMLInputElement(target: EventTarget): target is HTMLInputElement {
+    return target instanceof HTMLInputElement;
+  }
+
+  onFileSelected(event: InputEvent) {
+    const target = event.target;
+    if (!this.isHTMLInputElement(target)) {
+      return;
+    }
+    const file: File = (target as HTMLInputElement).files[0];
 
     if (!file || !file.name.endsWith('.txt')) {
       alert('Invalid file format! Please upload a .txt file.');
@@ -27,29 +35,32 @@ export class BowlingScoreboardComponent {
 
     const reader = new FileReader();
 
-    reader.onload = (e: any) => {
-      const content = e.target.result.split('\n');
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      const content = e.target?.result as string;
+      if (content) {
+        this.players = [];
 
-      this.players = [];
+        const lines = content.split('\n');
 
-      for (let i = 0; i < content.length; i += 2) {
-        const playerName = content[i];
-        const scores = content[i + 1].split(', ').map(Number);
+        for (let i = 0; i < lines.length; i += 2) {
+          const playerName = lines[i];
+          const scores = lines[i + 1].split(', ').map(Number);
 
-        const validationError = this.scoreValidationService.validatePlayerScores(playerName, scores);
+          const validationError = this.scoreValidationService.validatePlayerScores(playerName, scores);
 
-        if (validationError) {
-          alert(validationError);
-          return;
+          if (validationError) {
+            alert(validationError);
+            return;
+          }
+
+          const player: IPlayer = {
+            name: playerName,
+            scores: scores
+          };
+
+          player.totalScore = this.scoreCalculatorService.calculateScore(player.scores);
+          this.players.push(player);
         }
-
-        const player: IPlayer = {
-          name: playerName,
-          scores: scores
-        };
-
-        player.totalScore = this.scoreCalculatorService.calculateScore(player.scores);
-        this.players.push(player);
       }
     };
 
