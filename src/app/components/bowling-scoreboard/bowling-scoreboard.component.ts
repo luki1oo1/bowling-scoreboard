@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { IPlayer } from 'src/app/interfaces/players-interface';
 import { ScoreCalculatorService } from 'src/app/services/score-calculator.service';
 import { ScoreValidationService } from 'src/app/services/score-validation.service';
@@ -11,10 +12,13 @@ import { ScoreValidationService } from 'src/app/services/score-validation.servic
 export class BowlingScoreboardComponent {
   players: IPlayer[] = [];
   columns: number[] = Array(21).fill(0).map((x, i) => i);
+  snackBarRef: MatSnackBarRef<SimpleSnackBar>;
+  hasError = false;
 
   constructor(
     private scoreCalculatorService: ScoreCalculatorService,
-    private scoreValidationService: ScoreValidationService
+    private scoreValidationService: ScoreValidationService,
+    private snackBar: MatSnackBar
   ) { }
 
   isHTMLInputElement(target: EventTarget): target is HTMLInputElement {
@@ -22,14 +26,21 @@ export class BowlingScoreboardComponent {
   }
 
   onFileSelected(event: InputEvent) {
+    if (this.snackBarRef) {
+      this.snackBarRef.dismiss();
+    }
+
     const target = event.target;
+
     if (!this.isHTMLInputElement(target)) {
       return;
     }
+
     const file: File = (target as HTMLInputElement).files[0];
 
     if (!file || !file.name.endsWith('.txt')) {
-      alert('Invalid file format! Please upload a .txt file.');
+      this.snackBarRef = this.snackBar.open('Invalid file format! Please upload a .txt file.');
+      this.hasError = true;
       return;
     }
 
@@ -49,7 +60,8 @@ export class BowlingScoreboardComponent {
           const validationError = this.scoreValidationService.validatePlayerScores(playerName, scores);
 
           if (validationError) {
-            alert(validationError);
+            this.snackBarRef = this.snackBar.open(validationError);
+            this.hasError = true;
             return;
           }
 
@@ -64,6 +76,7 @@ export class BowlingScoreboardComponent {
       }
     };
 
+    this.hasError = false;
     reader.readAsText(file);
   }
 }

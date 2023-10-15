@@ -8,7 +8,7 @@
   <input id="file-upload" type="file" (change)="onFileSelected($event)">
 </div>
 
-<ng-container *ngIf="players.length > 0">
+<ng-container *ngIf="!hasError && players.length > 0">
   <div class="container-table desktop-table">
     <table aria-labelledby="table-title">
       <thead>
